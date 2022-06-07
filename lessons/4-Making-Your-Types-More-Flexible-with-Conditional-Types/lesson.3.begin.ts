@@ -1,23 +1,25 @@
-import { Project, TextLayer, ImageLayer, LayerType, Size } from "./types";
-import { render } from "./render";
+import { Project, TextLayer, ImageLayer, LayerType, Size } from './types';
+import { render } from './render';
 
 const projectSize: Size = {
   width: 512,
-  height: 250
+  height: 250,
 };
 
-function createLayer(type: LayerType): TextLayer | ImageLayer {
+type FactoryLayer<T> = T extends LayerType.Text ? TextLayer : ImageLayer;
+
+function createLayer<T extends LayerType>(type: T): FactoryLayer<T> {
   if (type === LayerType.Text) {
     return {
-      color: "#fff",
-      fontSize: "10px",
+      color: '#fff',
+      fontSize: '10px',
       id: new Date().toISOString(),
       maxWidth: 10000,
       position: { x: 10, y: 10 },
       rotation: 0,
-      text: "This is the default text",
-      type: LayerType.Text
-    } as TextLayer;
+      text: 'This is the default text',
+      type: LayerType.Text,
+    } as FactoryLayer<T>;
   }
 
   return {
@@ -25,9 +27,9 @@ function createLayer(type: LayerType): TextLayer | ImageLayer {
     maxBounds: { width: 400 },
     position: { x: 0, y: 0 },
     rotation: 0,
-    src: "ps-dark.png",
-    type: LayerType.Image
-  } as ImageLayer;
+    src: 'ps-dark.png',
+    type: LayerType.Image,
+  } as FactoryLayer<T>;
 }
 
 const textLayer = createLayer(LayerType.Text);
@@ -35,7 +37,7 @@ textLayer.text = "can't set this";
 
 const project: Project = {
   layers: [createLayer(LayerType.Image), createLayer(LayerType.Text)],
-  size: projectSize
+  size: projectSize,
 };
 
 render(project);
